@@ -14,4 +14,13 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun test() {
+        listOf(1, 2, 3).map {
+            it * it
+        }.let {
+            print(it)
+        }
+    }
 }
