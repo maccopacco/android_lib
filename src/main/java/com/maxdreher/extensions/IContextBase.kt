@@ -16,8 +16,9 @@ interface IContextBase {
         Log.i(getClassName(), text)
     }
 
-    fun toast(text: String) {
+    fun toast(text: String, long: Boolean = true) {
         log(text)
-        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show()
+        Toast.makeText(getContext(), text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
+            .show()
     }
 }
