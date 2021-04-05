@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.List;
 
 import de.codecrafters.tableview.SortableTableView;
@@ -12,9 +13,18 @@ import de.codecrafters.tableview.SortingStatus;
 import de.codecrafters.tableview.TableDataAdapter;
 import de.codecrafters.tableview.model.TableColumnWeightModel;
 
-//TODO #6
+/**
+ * Helper class for tables
+ */
 public class TableHelper {
 
+    /**
+     * @param context     context to use to update
+     * @param input       items to go into table
+     * @param entryList   list of columns {@see TableEntry}
+     * @param <InputType> type of data to show
+     * @return {@link TableDataAdapter}
+     */
     public static <InputType> TableDataAdapter<InputType> getTableAdapter(Context context, List<InputType> input, List<TableEntry<InputType>> entryList) {
         return new TableDataAdapter<InputType>(context, input) {
 
@@ -35,6 +45,16 @@ public class TableHelper {
         };
     }
 
+    /**
+     * Update {@link SortableTableView} with info from {@link TableEntry}s
+     *
+     * @param context     context to work with
+     * @param tableView   table to update
+     * @param input       list of data to enter to table
+     * @param entries     {@link TableEntry} columns to show
+     * @param <InputType> type of data
+     * @return {@code input} for chains? i guess
+     */
     public static <InputType> SortableTableView<InputType> updateTable(Context context, SortableTableView<InputType> tableView, List<InputType> input, List<TableEntry<InputType>> entries) {
         final SortingStatus sortingStatus = tableView.getSortingStatus();
 

@@ -5,6 +5,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 
+/**
+ * A base which provides helper functions in exchange for [Context]
+ */
 interface IContextBase {
     fun getContext(): Context?
 

@@ -1,5 +1,8 @@
 package com.maxdreher
 
+/**
+ * List of MIME types
+ */
 enum class MIME_TYPE(val value: String) {
     HTML("text/html"),
     HTML_ZIPPED("application/zipapplication/zip"),

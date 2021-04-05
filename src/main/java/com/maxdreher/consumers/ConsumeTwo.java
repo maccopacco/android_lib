@@ -1,6 +1,11 @@
 package com.maxdreher.consumers;
 
-//TODO #6
+/**
+ * SAM, {@link java.util.function.Consumer} but for two items
+ *
+ * @param <ConsumeA>
+ * @param <ConsumeB>
+ */
 public interface ConsumeTwo<ConsumeA, ConsumeB> {
     void consume(ConsumeA inputA, ConsumeB inputB);
 }

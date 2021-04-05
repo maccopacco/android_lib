@@ -9,9 +9,19 @@ import android.widget.TextView
 import com.maxdreher.consumers.ConsumeAndSupply
 import com.maxdreher.consumers.ConsumeTwo
 import com.maxdreher.consumers.ConsumeTwoAndSupply
+import de.codecrafters.tableview.SortableTableView
 import java.util.*
 
 
+/**
+ * A table value for a [SortableTableView]
+ *
+ * Holds:
+ * name of column
+ * a converter from input -> view (can be assisted with [textViewGenerator])
+ * comparator
+ * layout weight
+ */
 class TableEntry<Input> @JvmOverloads constructor(
     val name: String,
     private val viewGenerator: ConsumeTwoAndSupply<Context, Input, in View>,
