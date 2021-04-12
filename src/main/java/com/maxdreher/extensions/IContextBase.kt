@@ -1,6 +1,8 @@
 package com.maxdreher.extensions
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.LayoutRes
@@ -24,4 +26,18 @@ interface IContextBase {
         Toast.makeText(getContext(), text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
             .show()
     }
+
+    fun alertBuilder(title: String, message: String): AlertDialog.Builder {
+        return AlertDialog.Builder(getContext()).setTitle(title).setMessage(message)
+            .setPositiveButton("Ok") { _, _ -> }
+    }
+
+    fun alert(title: String, message: String) {
+        alertBuilder(title, message).show()
+    }
+
+    fun error(message: String) {
+        alert("Error", message)
+    }
+
 }
