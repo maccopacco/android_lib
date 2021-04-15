@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import java.lang.Exception
 
 interface IGoogleBaseBase : IContextBase {
@@ -17,7 +18,8 @@ interface IGoogleBaseBase : IContextBase {
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var signInClient: GoogleSignInClient? = null
-        private var account: GoogleSignInAccount? = null
+        var account: GoogleSignInAccount? = null
+            private set
     }
 
     val fragment: Fragment
@@ -62,9 +64,9 @@ interface IGoogleBaseBase : IContextBase {
         }
     }
 
-    fun signout() {
+    fun signout(): Task<Void>? {
         account = null
-        signInClient?.signOut()
+        return signInClient?.signOut()
             ?.addOnSuccessListener { onSignoutSuccess() }
             ?.addOnFailureListener { onSignoutFail(it) }
     }
