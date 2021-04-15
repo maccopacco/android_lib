@@ -1,20 +1,14 @@
 package com.maxdreher
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.View
 import android.widget.Button
-import androidx.annotation.LayoutRes
 import androidx.navigation.findNavController
-import com.amplifyframework.core.model.Model
-import com.amplifyframework.core.model.query.predicate.QueryPredicate
-import com.amplifyframework.datastore.DataStoreCategory
-import com.amplifyframework.datastore.DataStoreException
-import com.amplifyframework.datastore.DataStoreItemChange
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.function.Consumer
+import java.io.InputStream
+import java.net.URL
+
 
 /**
  * Utility class
@@ -43,6 +37,21 @@ class Util {
         fun buttonToListener(view: View, map: Map<Int, View.OnClickListener>) {
             map.entries.forEach { entry ->
                 view.findViewById<View>(entry.key).setOnClickListener(entry.value)
+            }
+        }
+
+        fun uriToDrawable(uri: Uri?): Drawable? {
+            return uri?.let {
+                urlToDrawable(it.path)
+            }
+        }
+
+        fun urlToDrawable(url: String?): Drawable? {
+            return try {
+                val `is`: InputStream = URL(url).content as InputStream
+                Drawable.createFromStream(`is`, "src name")
+            } catch (e: Exception) {
+                null
             }
         }
 
