@@ -17,8 +17,16 @@ interface IContextBase {
         return javaClass.simpleName
     }
 
-    fun log(text: String) {
-        Log.i(getClassName(), text)
+    fun loge(text: String) {
+        log(text, error = true)
+    }
+
+    fun log(text: String, error: Boolean = false) {
+        if (error) {
+            Log.e(getClassName(), text)
+        } else {
+            Log.i(getClassName(), text)
+        }
     }
 
     fun toast(text: String, long: Boolean = false) {
@@ -32,12 +40,13 @@ interface IContextBase {
             .setPositiveButton("Ok") { _, _ -> }
     }
 
-    fun alert(title: String, message: String) {
+    fun alert(title: String, message: String, error: Boolean = false) {
+        log(message, error)
         alertBuilder(title, message).show()
     }
 
     fun error(message: String) {
-        alert("Error", message)
+        alert("Error", message, true)
     }
 
 }
