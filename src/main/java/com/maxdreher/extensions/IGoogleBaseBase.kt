@@ -10,7 +10,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
-import java.lang.Exception
 
 interface IGoogleBaseBase : IContextBase {
     val GOOGLE_REQUEST_CODE: Int
@@ -51,6 +50,7 @@ interface IGoogleBaseBase : IContextBase {
     }
 
     fun onSignoutSuccess() {
+        account = null
         toast("Signed out")
     }
 
@@ -59,13 +59,14 @@ interface IGoogleBaseBase : IContextBase {
     }
 
     fun signin() {
-        client().let {
-            fragment.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
+        if (account == null) {
+            client().let {
+                fragment.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
+            }
         }
     }
 
     fun signout(): Task<Void>? {
-        account = null
         return signInClient?.signOut()
             ?.addOnSuccessListener { onSignoutSuccess() }
             ?.addOnFailureListener { onSignoutFail(it) }
