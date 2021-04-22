@@ -11,6 +11,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 
+/**
+ * Extension of [IContextBase] which provides [signin] and [signout] functions and
+ * overrideable listeners ([onSigninSuccess], [onSigninFail], etc.)
+ */
 interface IGoogleBaseBase : IContextBase {
     val GOOGLE_REQUEST_CODE: Int
 

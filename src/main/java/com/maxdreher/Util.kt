@@ -40,6 +40,9 @@ class Util {
             }
         }
 
+        /**
+         * Convert [uri] to [Drawable]
+         */
         fun uriToDrawable(uri: Uri?): Drawable? {
             return uri?.let {
                 urlToDrawable(it.path)
