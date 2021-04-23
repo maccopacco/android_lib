@@ -35,7 +35,7 @@ interface IContextBase {
             .show()
     }
 
-    fun alertBuilder(title: String, message: String): AlertDialog.Builder {
+    fun alertBuilder(title: String, message: String? = null): AlertDialog.Builder {
         return AlertDialog.Builder(getContext()).setTitle(title).setMessage(message)
             .setPositiveButton("Ok") { _, _ -> }
     }
