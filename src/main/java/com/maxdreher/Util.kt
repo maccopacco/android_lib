@@ -49,6 +49,9 @@ class Util {
             }
         }
 
+        /**
+         * Convert [url] to [Drawable]
+         */
         fun urlToDrawable(url: String?): Drawable? {
             return try {
                 val `is`: InputStream = URL(url).content as InputStream
@@ -56,6 +59,13 @@ class Util {
             } catch (e: Exception) {
                 null
             }
+        }
+
+        /**
+         * Get random [Int] between [min] and [max]
+         */
+        fun getRandInt(min: Int, max: Int): Int {
+            return min + (Math.random() * (max - min + 1)).toInt()
         }
 
     }
