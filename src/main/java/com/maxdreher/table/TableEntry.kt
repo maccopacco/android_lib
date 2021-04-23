@@ -38,6 +38,14 @@ class TableEntry<Input> @JvmOverloads constructor(
 
     companion object {
 
+        fun <Input> toText(
+            name: String,
+            toString: (Input) -> String,
+            margin: Int
+        ): TableEntry<Input> {
+            return TableEntry(name, textViewGenerator(toString, margin))
+        }
+
         fun <Input> textViewGenerator(
             convertToText: ConsumeAndSupply<Input, String>,
             margin: Int,
