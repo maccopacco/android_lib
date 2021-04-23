@@ -2,6 +2,7 @@ package com.maxdreher.amphelper
 
 import com.amplifyframework.datastore.DataStoreException
 import kotlinx.coroutines.*
+import java.lang.Exception
 import java.lang.Runnable
 import java.util.function.Consumer
 
@@ -12,15 +13,15 @@ import java.util.function.Consumer
  * consumers for exception (consumer for data must be provided)
  * helper methods to wait until data accepted
  */
-open class AmpHelperBase<ReturnType> {
+open class AmpHelperBase<ReturnType, ExceptionType : Exception> {
     protected var data: ReturnType? = null
-    private var exception: DataStoreException? = null
+    private var exception: ExceptionType? = null
 
     /**
      * Consumer which resets old data on access and returns a consumer which
      * sets the local [exception] value
      */
-    val b: (value: DataStoreException) -> Unit
+    val b: (value: ExceptionType) -> Unit
         get() = reset().let {
             { exception = it }
         }
@@ -38,7 +39,7 @@ open class AmpHelperBase<ReturnType> {
      */
     fun afterWait(
         onSuccess: Consumer<ReturnType>,
-        onFail: Consumer<DataStoreException>,
+        onFail: Consumer<ExceptionType>,
     ) {
         loop {
             data?.let { onSuccess.accept(it) } ?: exception?.let { onFail.accept(it) }

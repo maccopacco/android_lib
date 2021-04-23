@@ -5,7 +5,7 @@ import com.amplifyframework.core.Action
 /**
  * [AmpHelperBase] for deletions
  */
-class AmpHelperD : AmpHelperBase<String>() {
+class AmpHelperD : AmpHelperDataStoreBase<String>() {
     val g = Action {
         data = "not null"
     }
