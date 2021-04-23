@@ -8,6 +8,8 @@ import android.widget.Button
 import androidx.navigation.findNavController
 import java.io.InputStream
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -68,6 +70,9 @@ class Util {
             return min + (Math.random() * (max - min + 1)).toInt()
         }
 
+        fun getSaneDate(date: Date = Date()): String {
+            return SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS").format(date)
+        }
     }
 
 }
