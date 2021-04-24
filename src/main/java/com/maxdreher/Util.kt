@@ -36,9 +36,9 @@ class Util {
         /**
          * Apply [View.OnClickListener] to map of buttons
          */
-        fun buttonToListener(view: View, map: Map<Int, View.OnClickListener>) {
+        fun buttonToListener(view: View, map: Map<Int, () -> Unit>) {
             map.entries.forEach { entry ->
-                view.findViewById<View>(entry.key).setOnClickListener(entry.value)
+                view.findViewById<View>(entry.key).setOnClickListener { entry.value.invoke() }
             }
         }
 

@@ -24,7 +24,7 @@ import java.util.*
  */
 class TableEntry<Input> @JvmOverloads constructor(
     val name: String,
-    private val viewGenerator: ConsumeTwoAndSupply<Context, Input, in View>,
+    private val viewGenerator: (Context, Input) -> View,
     val weight: Int = 1,
     val comparator: Comparator<Input>? = null,
 ) {
@@ -32,11 +32,18 @@ class TableEntry<Input> @JvmOverloads constructor(
     val isSortable: Boolean
         get() = comparator != null
 
-    fun generate(context: Context?, input: Input): View {
-        return viewGenerator.consume(context, input) as View
+    fun generate(context: Context, input: Input): View {
+        return viewGenerator.invoke(context, input)
     }
 
     companion object {
+
+        fun <Input> from(
+            margin: Int,
+            map: Map<String, (Input) -> String>
+        ): List<TableEntry<Input>> {
+            return map.map { toText(it.key, it.value, margin) }
+        }
 
         fun <Input> toText(
             name: String,
@@ -47,30 +54,36 @@ class TableEntry<Input> @JvmOverloads constructor(
         }
 
         fun <Input> textViewGenerator(
-            convertToText: ConsumeAndSupply<Input, String>,
+            convertToText: (Input) -> String,
             margin: Int,
-            viewConsumer: ConsumeTwo<TextView, Input>? = null
-        ): ConsumeTwoAndSupply<Context, Input, View> {
-            return ConsumeTwoAndSupply { context: Context, input: Input ->
+            viewConsumer: ((TextView, Input) -> Unit)? = null
+        ): (Context, Input) -> View {
+            return { context: Context, input: Input ->
 
                 val linearLayout = LinearLayout(context)
-                linearLayout.orientation = LinearLayout.HORIZONTAL
-                linearLayout.gravity = Gravity.CENTER
-                linearLayout.layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                val textView = TextView(context)
-                textView.text = convertToText.consume(input)
-                textView.gravity = Gravity.CENTER
+
+                linearLayout.apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val textView = TextView(context).apply {
+                    text = convertToText.invoke(input)
+                    gravity = Gravity.CENTER
+                }
+
                 if (margin != -1) {
                     textView.setPadding(margin, margin, margin, margin)
                 }
 
-                viewConsumer?.consume(textView, input)
+                viewConsumer?.invoke(textView, input)
 
                 linearLayout.addView(textView)
-                return@ConsumeTwoAndSupply linearLayout
+                linearLayout
             }
         }
     }
