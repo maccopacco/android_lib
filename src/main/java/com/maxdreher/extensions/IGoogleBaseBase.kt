@@ -35,6 +35,7 @@ interface IGoogleBaseBase : IContextBase {
     }
 
     private fun init(): GoogleSignInClient? {
+        call(object {})
         return getContext()?.let {
             GoogleSignIn.getClient(
                 it, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -46,23 +47,28 @@ interface IGoogleBaseBase : IContextBase {
 
 
     fun onSigninSuccess(account: GoogleSignInAccount) {
+        call(object {})
         toast("Signed into ${account.displayName}")
     }
 
     fun onSigninFail(exception: Exception) {
+        call(object {})
         error("Could not sign in\n${exception.message}")
     }
 
     fun onSignoutSuccess() {
+        call(object {})
         account = null
         toast("Signed out")
     }
 
     fun onSignoutFail(exception: Exception) {
+        call(object {})
         error("Could not sign out\n${exception.message}")
     }
 
     fun signin() {
+        call(object {})
         if (account == null) {
             client().let {
                 fragment.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
@@ -71,13 +77,15 @@ interface IGoogleBaseBase : IContextBase {
     }
 
     fun signout(): Task<Void>? {
-        return signInClient?.signOut()
+        call(object {})
+        return client().signOut()
             ?.addOnSuccessListener { onSignoutSuccess() }
             ?.addOnFailureListener { onSignoutFail(it) }
     }
 
 
     private fun handleSignin(data: Intent) {
+        call(object {})
         val completedTask = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
             account = completedTask.getResult(ApiException::class.java)
