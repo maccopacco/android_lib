@@ -1,11 +1,14 @@
 package com.maxdreher
 
+import android.app.Application
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.Button
 import androidx.navigation.findNavController
+import com.maxdreher.extensions.IContextBase
+import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -72,6 +75,21 @@ class Util {
 
         fun getSaneDate(date: Date = Date()): String {
             return SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS").format(date)
+        }
+
+        fun startLogging(cb: IContextBase): Boolean {
+            val date = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").format(Date())
+            try {
+                val dir = "/data/data/${cb.getContext()?.applicationInfo?.packageName}/logs"
+                Runtime.getRuntime()
+                    .exec("mkdir $dir")
+                Runtime.getRuntime().exec("logcat -f $dir/$date.txt")
+                cb.log("Started logging")
+                return true
+            } catch (e: IOException) {
+                cb.loge("Could not start logging")
+            }
+            return false
         }
     }
 

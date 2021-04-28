@@ -50,7 +50,7 @@ interface IContextBase {
     }
 
     fun call(param: Any) {
-        val name = param.javaClass.enclosingMethod.name
+        val name = param.javaClass.enclosingMethod?.name
         log("Called $name")
     }
 
