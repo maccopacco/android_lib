@@ -25,7 +25,7 @@ interface IGoogleBaseBase : IContextBase {
             private set
     }
 
-    val fragment: Fragment
+    val activity: Activity
 
     fun client(): GoogleSignInClient {
         if (signInClient == null) {
@@ -71,7 +71,7 @@ interface IGoogleBaseBase : IContextBase {
         call(object {})
         if (account == null) {
             client().let {
-                fragment.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
+                activity.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
             }
         }
     }
