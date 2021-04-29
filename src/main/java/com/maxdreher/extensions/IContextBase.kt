@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import java.lang.Exception
 
 /**
  * A base which provides helper functions in exchange for [Context]
@@ -42,7 +43,11 @@ interface IContextBase {
 
     fun alert(title: String, message: String, error: Boolean = false) {
         log(message, error)
-        alertBuilder(title, message).show()
+        try {
+            alertBuilder(title, message).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun error(message: String) {
