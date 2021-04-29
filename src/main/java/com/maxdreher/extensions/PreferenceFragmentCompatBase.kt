@@ -11,7 +11,7 @@ open class PreferenceFragmentCompatBase(@XmlRes private val preferencesResId: In
         setPreferencesFromResource(preferencesResId, rootKey)
     }
 
-    fun findPreference(name: String, onClick: () -> Unit): Preference? {
+    fun findPreference(name: String, onClick: () -> Unit = {}): Preference? {
         return findPreferenceReturn(name) { onClick.invoke();true }
     }
 
