@@ -21,6 +21,9 @@ open class PreferenceFragmentCompatBase(@XmlRes private val preferencesResId: In
                 log("Preference $name clicked")
                 return@setOnPreferenceClickListener onClick.invoke()
             }
+        } ?: let {
+            loge("Preference [$name] could not be found")
+            null
         }
     }
 }
