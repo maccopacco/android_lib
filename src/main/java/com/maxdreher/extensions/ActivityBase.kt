@@ -18,7 +18,7 @@ open class ActivityBase(@LayoutRes contentLayoutId: Int) : AppCompatActivity(con
         private val hasStartedLogging = AtomicBoolean(false)
     }
 
-    override fun getContext(): Context? = applicationContext
+    override fun getContext(): Context? = this@ActivityBase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
