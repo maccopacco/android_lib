@@ -20,6 +20,7 @@ import java.util.*
  */
 class Util {
     companion object {
+        val saneDateFormat = SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS")
         fun getDefaultMargin(context: Context?, id: Int): Int {
             return context!!.resources.getDimension(id).toInt()
         }
@@ -74,7 +75,7 @@ class Util {
         }
 
         fun getSaneDate(date: Date = Date()): String {
-            return SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS").format(date)
+            return saneDateFormat.format(date)
         }
 
         fun startLogging(cb: IContextBase): Boolean {
