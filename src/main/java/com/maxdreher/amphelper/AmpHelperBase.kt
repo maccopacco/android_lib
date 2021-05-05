@@ -1,6 +1,5 @@
 package com.maxdreher.amphelper
 
-import com.amplifyframework.datastore.DataStoreException
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.Runnable
@@ -34,32 +33,33 @@ open class AmpHelperBase<ReturnType, ExceptionType : Exception> {
         exception = null
     }
 
-    /**
-     * Handle success / fail logic
-     */
-    fun afterWait(
-        onSuccess: Consumer<ReturnType>,
-        onFail: Consumer<ExceptionType>,
-    ) {
-        loop {
-            data?.let { onSuccess.accept(it) } ?: exception?.let { onFail.accept(it) }
-        }
-    }
 
     /**
      * Loop while waiting for data or exception, then run [Runnable] with
      * main scope
      */
-    private fun loop(
-        afterwards: Runnable,
+    fun afterWait(
+        onSuccess: (ReturnType) -> Unit,
+        onFail: (ExceptionType) -> Unit,
     ) {
         GlobalScope.launch {
-            while (data == null && exception == null) {
-                delay(50L)
-            }
-            withContext(Dispatchers.Main) {
-                afterwards.run()
-            }
+            afterWaitSuspense({
+                onSuccess.invoke(it)
+            }, {
+                onFail.invoke(it)
+            })
+        }
+    }
+
+    suspend fun afterWaitSuspense(
+        onSuccess: suspend (ReturnType) -> Unit,
+        onFail: suspend (ExceptionType) -> Unit,
+    ) {
+        while (data == null && exception == null) {
+            delay(50L)
+        }
+        withContext(Dispatchers.Main) {
+            data?.let { onSuccess.invoke(it) } ?: exception?.let { onFail.invoke(it) }
         }
     }
 }

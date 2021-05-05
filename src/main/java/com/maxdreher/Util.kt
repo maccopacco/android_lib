@@ -21,6 +21,8 @@ import java.util.*
 class Util {
     companion object {
         val saneDateFormat = SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS")
+        val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+
         fun getDefaultMargin(context: Context?, id: Int): Int {
             return context!!.resources.getDimension(id).toInt()
         }
