@@ -1,12 +1,14 @@
 package com.maxdreher
 
-import android.app.Application
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.Button
 import androidx.navigation.findNavController
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.model.Model
+import com.maxdreher.amphelper.AmpHelper
 import com.maxdreher.extensions.IContextBase
 import java.io.IOException
 import java.io.InputStream
@@ -66,6 +68,34 @@ class Util {
                 Drawable.createFromStream(`is`, "src name")
             } catch (e: Exception) {
                 null
+            }
+        }
+
+        /**
+         * Save [Model]s ([list]) sequentially
+         *
+         * @param batch models are typically saved in batches (all A,B,Cs that relate), this gives a
+         * unique printout
+         * @param errors error consumer on
+         */
+        suspend fun saveModels(
+            cb: IContextBase,
+            list: List<Model>,
+            batch: Int,
+            errors: (Model, Exception, Int) -> Unit =
+                { model, error, consumerBatch ->
+                    cb.loge("Couldn't save ${model.modelName} of batch $consumerBatch\n${error.message}")
+                    error.printStackTrace()
+                }
+        ) {
+            for ((index, model) in list.withIndex()) {
+                AmpHelper<Model>().apply {
+                    Amplify.DataStore.save(model, g, b)
+                    afterWaitSuspense(
+                        {
+                            cb.log("[$batch] [$index] Saved ${model.modelName} ${model.id}")
+                        }, { errors.invoke(model, it, batch) })
+                }
             }
         }
 
