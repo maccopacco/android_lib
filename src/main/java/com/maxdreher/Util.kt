@@ -10,6 +10,8 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
 import com.maxdreher.amphelper.AmpHelper
 import com.maxdreher.extensions.IContextBase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
@@ -68,6 +70,22 @@ class Util {
                 Drawable.createFromStream(`is`, "src name")
             } catch (e: Exception) {
                 null
+            }
+        }
+
+        /**
+         * Save 2d list of [Model]s
+         */
+        suspend fun saveModels(
+            cb: IContextBase,
+            list: List<List<Model>>
+        ) {
+            runBlocking {
+                for ((index, modelList) in list.withIndex()) {
+                    launch {
+                        saveModels(cb, modelList, index)
+                    }
+                }
             }
         }
 
