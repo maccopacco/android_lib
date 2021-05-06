@@ -30,10 +30,13 @@ interface IContextBase {
         }
     }
 
-    fun toast(text: String, long: Boolean = false) {
-        log(text)
-        Toast.makeText(getContext(), text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
-            .show()
+    fun toast(text: String, long: Boolean = false, error: Boolean = false) {
+        log(text, error)
+        Toast.makeText(
+            getContext(),
+            text,
+            if (long || error) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun alertBuilder(title: String, message: String? = null): AlertDialog.Builder {

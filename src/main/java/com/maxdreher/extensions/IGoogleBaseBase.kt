@@ -96,6 +96,7 @@ interface IGoogleBaseBase : IContextBase {
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        call(object {})
         when (requestCode) {
             GOOGLE_REQUEST_CODE -> {
                 when (resultCode) {
