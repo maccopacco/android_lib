@@ -57,9 +57,10 @@ interface IContextBase {
         alert("Error", message, true)
     }
 
-    fun call(param: Any) {
-        val name = param.javaClass.enclosingMethod?.name
-        log("Called $name")
+    fun call(param: Any): String? {
+        return param.javaClass.enclosingMethod?.name.also {
+            log("Called $it")
+        }
     }
 
 
