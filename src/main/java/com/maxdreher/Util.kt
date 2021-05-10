@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.Button
+import android.widget.DatePicker
 import androidx.navigation.findNavController
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
@@ -71,6 +72,20 @@ class Util {
             } catch (e: Exception) {
                 null
             }
+        }
+
+        /**
+         * @param datePicker [DatePicker] to get [Date] from
+         * @return [Date]
+         */
+        fun getDateFromDatePicker(datePicker: DatePicker): Date {
+            val day = datePicker.dayOfMonth
+            val month = datePicker.month
+            val year = datePicker.year
+            val calendar = Calendar.getInstance()
+//            calendar[year, month] = day
+            calendar.set(year, month, day)
+            return calendar.time
         }
 
         /**
