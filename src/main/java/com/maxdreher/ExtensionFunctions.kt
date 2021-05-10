@@ -54,8 +54,8 @@ inline fun <reified T : Model> KClass<T>.query(
 }
 
 inline fun <reified T : Model> T.save(
-    noinline onSave: (T) -> Unit,
-    noinline onFail: (DataStoreException) -> Unit
+    noinline onSave: (T) -> Unit = {},
+    noinline onFail: (DataStoreException) -> Unit = {}
 ) {
     AmpHelper<T>().apply {
         Amplify
