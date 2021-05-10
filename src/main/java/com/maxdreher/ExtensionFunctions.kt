@@ -1,5 +1,6 @@
 package com.maxdreher
 
+import android.widget.DatePicker
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
 import com.amplifyframework.core.model.query.QueryOptions
@@ -11,7 +12,12 @@ import com.maxdreher.amphelper.AmpHelperD
 import com.maxdreher.amphelper.AmpHelperQ
 import com.maxdreher.extensions.IContextBase
 import java.lang.Exception
+import java.util.*
 import kotlin.reflect.KClass
+
+fun DatePicker.getDate(): Date {
+    return Util.getDateFromDatePicker(this)
+}
 
 inline fun <reified T : Model> KClass<T>.deleteAll(
     noinline onSuccess: (String) -> Unit,
