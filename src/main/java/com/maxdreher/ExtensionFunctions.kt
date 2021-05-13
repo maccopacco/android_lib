@@ -17,6 +17,19 @@ import java.lang.Exception
 import java.util.*
 import kotlin.reflect.KClass
 
+inline fun <T> Iterable<T>.onlyOne(predicate: (T) -> Boolean): Boolean {
+    var oneFound = false
+    forEach { item ->
+        if (item.let(predicate)) {
+            if (oneFound) {
+                return false
+            }
+            oneFound = true
+        }
+    }
+    return oneFound
+}
+
 fun DatePicker.getDate(): Date {
     return Util.getDateFromDatePicker(this)
 }
@@ -75,6 +88,16 @@ inline fun <reified T : Model> KClass<T>.query(
     AmpHelperQ<T>().apply {
         Amplify.DataStore.query(T::class.java, options, g, b)
         afterWait(onSuccess, onFail)
+    }
+}
+
+suspend inline fun <reified T : Model> T.saveSuspend(): T? {
+    AmpHelper<T>().apply {
+        var ret: T? = null
+        afterWaitSuspense({
+            ret = it
+        }, {})
+        return ret
     }
 }
 
