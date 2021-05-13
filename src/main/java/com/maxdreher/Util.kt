@@ -11,8 +11,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
 import com.maxdreher.amphelper.AmpHelper
 import com.maxdreher.extensions.IContextBase
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
@@ -95,13 +94,11 @@ class Util {
             cb: IContextBase,
             list: List<List<Model>>
         ) {
-            runBlocking {
-                for ((index, modelList) in list.withIndex()) {
-                    launch {
-                        saveModels(cb, modelList, index)
-                    }
+            list.withIndex().map { (index, modelList) ->
+                GlobalScope.async {
+                    saveModels(cb, modelList, index)
                 }
-            }
+            }.awaitAll()
         }
 
         /**
