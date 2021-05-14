@@ -11,9 +11,9 @@ import com.amplifyframework.datastore.DataStoreException
 import com.maxdreher.amphelper.AmpHelper
 import com.maxdreher.amphelper.AmpHelperD
 import com.maxdreher.amphelper.AmpHelperQ
-import com.maxdreher.amphelper.SuspendedQueryResult
+import com.maxdreher.amphelper.suspense.Suspend
+import com.maxdreher.amphelper.suspense.SuspendQuery
 import com.maxdreher.extensions.IContextBase
-import java.lang.Exception
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -63,18 +63,18 @@ inline fun <reified T : Model> KClass<T>.query(
     }
 }
 
-suspend inline fun <reified T : Model> KClass<T>.query(queryPredicate: QueryPredicate): SuspendedQueryResult<T> {
+suspend inline fun <reified T : Model> KClass<T>.query(queryPredicate: QueryPredicate): SuspendQuery<T> {
     return query(Where.matches(queryPredicate))
 }
 
-suspend inline fun <reified T : Model> KClass<T>.query(predicate: QueryOptions): SuspendedQueryResult<T> {
+suspend inline fun <reified T : Model> KClass<T>.query(predicate: QueryOptions): SuspendQuery<T> {
     return AmpHelperQ<T>().run {
-        var result: SuspendedQueryResult<T>? = null
+        var result: SuspendQuery<T>? = null
         Amplify.DataStore.query(T::class.java, predicate, g, b)
         afterWaitSuspense({
-            result = SuspendedQueryResult(it)
+            result = SuspendQuery(it)
         }, {
-            result = SuspendedQueryResult(it)
+            result = SuspendQuery(it)
         })
         result!!
     }
@@ -91,13 +91,15 @@ inline fun <reified T : Model> KClass<T>.query(
     }
 }
 
-suspend inline fun <reified T : Model> T.saveSuspend(): T? {
+suspend inline fun <reified T : Model> T.saveSuspend(): Suspend<T> {
     AmpHelper<T>().apply {
-        var ret: T? = null
+        var ret: Suspend<T>? = null
         afterWaitSuspense({
-            ret = it
-        }, {})
-        return ret
+            ret = Suspend(it)
+        }, {
+            ret = Suspend(it)
+        })
+        return ret!!
     }
 }
 
