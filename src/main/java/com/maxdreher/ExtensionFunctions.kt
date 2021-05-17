@@ -93,6 +93,7 @@ inline fun <reified T : Model> KClass<T>.query(
 
 suspend inline fun <reified T : Model> T.saveSuspend(): Suspend<T> {
     AmpHelper<T>().apply {
+        Amplify.DataStore.save(this@saveSuspend, g, b)
         var ret: Suspend<T>? = null
         afterWaitSuspense({
             ret = Suspend(it)
