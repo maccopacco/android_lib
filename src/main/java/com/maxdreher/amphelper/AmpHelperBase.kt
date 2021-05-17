@@ -3,7 +3,6 @@ package com.maxdreher.amphelper
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.Runnable
-import java.util.function.Consumer
 
 /**
  * Helper class for Amazon's Amplify DataStore caslls
@@ -12,7 +11,7 @@ import java.util.function.Consumer
  * consumers for exception (consumer for data must be provided)
  * helper methods to wait until data accepted
  */
-open class AmpHelperBase<ReturnType, ExceptionType : Exception> {
+abstract class AmpHelperBase<ReturnType, ExceptionType : Exception> {
     protected var data: ReturnType? = null
     private var exception: ExceptionType? = null
 
@@ -54,12 +53,28 @@ open class AmpHelperBase<ReturnType, ExceptionType : Exception> {
     suspend fun afterWaitSuspense(
         onSuccess: suspend (ReturnType) -> Unit,
         onFail: suspend (ExceptionType) -> Unit,
+        timeoutMilliseconds: Int = 5000
     ) {
-        while (data == null && exception == null) {
+        val startTime = System.currentTimeMillis()
+        var didTimeout = false
+        val isTimedOut = {
+            (System.currentTimeMillis() - startTime > timeoutMilliseconds).also {
+                if (it)
+                    didTimeout = true
+            }
+        }
+        while (data == null && exception == null && !isTimedOut.invoke()) {
             delay(50L)
         }
-        withContext(Dispatchers.Main) {
-            data?.let { onSuccess.invoke(it) } ?: exception?.let { onFail.invoke(it) }
+        if (didTimeout) {
+            println("afterWaitSuspense Timed out")
+            onTimeout(onFail, timeoutMilliseconds)
+        } else {
+            withContext(Dispatchers.Main) {
+                data?.let { onSuccess.invoke(it) } ?: exception?.let { onFail.invoke(it) }
+            }
         }
     }
+
+    abstract suspend fun onTimeout(onFail: suspend (ExceptionType) -> Unit, timeout: Int)
 }
