@@ -4,8 +4,11 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
+import android.widget.LinearLayout
+import androidx.core.view.marginBottom
 import androidx.navigation.findNavController
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
@@ -168,7 +171,28 @@ class Util {
     }
 }
 
+private fun Boolean.wrapToInt(): Int {
+    return if (this) {
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    } else {
+        ViewGroup.LayoutParams.MATCH_PARENT
+    }
+}
 
+fun View.setMargin(wrapHorizontal: Boolean, wrapVertical: Boolean, margin: Int) {
+    layoutParams =
+        LinearLayout.LayoutParams(wrapHorizontal.wrapToInt(), wrapVertical.wrapToInt()).apply {
+            setMargins(margin, margin, margin, margin)
+        }
+}
+
+fun ViewGroup.setMargin(wrapHorizontal: Boolean, wrapVertical: Boolean, margin: Int) {
+    layoutParams =
+        ViewGroup.MarginLayoutParams(wrapHorizontal.wrapToInt(), wrapVertical.wrapToInt())
+            .apply {
+                setMargins(margin, margin, margin, margin)
+            }
+}
 
 inline fun <T> Iterable<T>.onlyOne(predicate: (T) -> Boolean): Boolean {
     var oneFound = false
