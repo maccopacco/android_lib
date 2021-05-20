@@ -14,6 +14,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
 import com.amplifyframework.core.model.query.QueryOptions
 import com.amplifyframework.core.model.query.Where
+import com.amplifyframework.core.model.query.predicate.QueryField
 import com.amplifyframework.core.model.query.predicate.QueryPredicate
 import com.amplifyframework.core.model.query.predicate.QueryPredicates
 import com.amplifyframework.datastore.DataStoreException
@@ -225,6 +226,10 @@ inline fun <T> Iterable<T>.onlyOne(predicate: (T) -> Boolean): Boolean {
 
 fun DatePicker.getDate(): Date {
     return Util.getDateFromDatePicker(this)
+}
+
+fun QueryField.inList(items: List<Model>): QueryPredicate {
+    return items.map { this.eq(it.id) as QueryPredicate }.reduce { a, n -> a.or(n) }
 }
 
 inline fun <reified T : Model> KClass<T>.deleteAll(
