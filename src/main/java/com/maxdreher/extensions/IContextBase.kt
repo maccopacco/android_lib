@@ -30,6 +30,10 @@ interface IContextBase {
         }
     }
 
+    fun etoast(text: String) {
+        toast(text, error = true)
+    }
+
     fun toast(text: String, long: Boolean = false, error: Boolean = false) {
         log(text, error)
         Toast.makeText(

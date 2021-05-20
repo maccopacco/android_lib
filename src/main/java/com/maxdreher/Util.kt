@@ -150,8 +150,8 @@ class Util {
             return min + (Math.random() * (max - min + 1)).toInt()
         }
 
-        fun getSaneDate(date: Date = Date()): String {
-            return saneDateFormat.format(date)
+        fun getSaneDate(): String {
+            return Date().toSaneDate()
         }
 
         fun startLogging(cb: IContextBase): Boolean {
@@ -176,6 +176,22 @@ private fun Boolean.wrapToInt(): Int {
         ViewGroup.LayoutParams.WRAP_CONTENT
     } else {
         ViewGroup.LayoutParams.MATCH_PARENT
+    }
+}
+
+fun Date.toSimpleDate(): String {
+    return Util.simpleDateFormat.format(this)
+}
+
+fun Date.toSaneDate(): String {
+    return Util.saneDateFormat.format(this)
+}
+
+fun String.toSaneDate(): Date? {
+    return try {
+        Util.saneDateFormat.parse(this)
+    } catch (e: Exception) {
+        null
     }
 }
 
@@ -216,6 +232,19 @@ inline fun <reified T : Model> KClass<T>.deleteAll(
     noinline onFail: (DataStoreException) -> Unit
 ) {
     return delete(QueryPredicates.all(), onSuccess, onFail)
+}
+
+inline fun <reified T : Model> T.delete(
+    noinline onSuccess: () -> Unit,
+    noinline onFail: (DataStoreException) -> Unit
+) {
+    AmpHelperD().apply {
+        Amplify.DataStore.delete(
+            this@delete,
+            { onSuccess.invoke() },
+            onFail
+        )
+    }
 }
 
 inline fun <reified T : Model> KClass<T>.delete(
