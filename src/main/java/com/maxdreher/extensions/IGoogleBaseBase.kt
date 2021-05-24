@@ -2,14 +2,20 @@ package com.maxdreher.extensions
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import androidx.fragment.app.Fragment
+import android.content.SharedPreferences
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Extension of [IContextBase] which provides [signin] and [signout] functions and
@@ -19,13 +25,20 @@ interface IGoogleBaseBase : IContextBase {
     val GOOGLE_REQUEST_CODE: Int
 
     companion object {
+        private const val accountNamePrefKey = "accountName"
+
         @SuppressLint("StaticFieldLeak")
         private var signInClient: GoogleSignInClient? = null
+
         var account: GoogleSignInAccount? = null
             private set
     }
 
     val activity: Activity?
+
+    val sharedPreferences: SharedPreferences?
+        get() = activity?.getSharedPreferences("googleSharedPref", Context.MODE_PRIVATE)
+
 
     fun client(): GoogleSignInClient {
         if (signInClient == null) {
@@ -49,6 +62,15 @@ interface IGoogleBaseBase : IContextBase {
     fun onSigninSuccess(account: GoogleSignInAccount) {
         call(object {})
         toast("Signed into ${account.displayName}")
+        try {
+            val json = Gson().toJson(account)
+            sharedPreferences?.edit()
+                ?.putString(accountNamePrefKey, json)
+                ?.apply()
+        } catch (e: java.lang.Exception) {
+            loge("Could not save account: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     fun onSigninFail(exception: Exception) {
@@ -70,9 +92,31 @@ interface IGoogleBaseBase : IContextBase {
     fun signin() {
         call(object {})
         if (account == null) {
+            log("No account found")
+            if (sharedPreferences?.contains(accountNamePrefKey) == true) {
+                log("Account in shared prefs")
+                sharedPreferences?.getString(accountNamePrefKey, null)?.let { json ->
+                    log("Has json")
+                    try {
+                        val acc = Gson().fromJson(json, GoogleSignInAccount::class.java)
+                        GlobalScope.launch {
+                            withContext(Dispatchers.Main) {
+                                onSigninSuccess(acc)
+                            }
+                        }
+                        return
+                    } catch (e: java.lang.Exception) {
+                        loge("Bad account parse\n")
+                        e.printStackTrace()
+                    }
+                }
+            }
             client().let {
+                log("Starting signin")
                 activity?.startActivityForResult(it.signInIntent, GOOGLE_REQUEST_CODE)
             }
+        } else {
+            log("Account found")
         }
     }
 
