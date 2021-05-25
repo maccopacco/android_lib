@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.annotation.LayoutRes
 
 open class ArrayAdapterBase<T>(
-    private val inputContext: Context,
+    inputContext: Context,
     @LayoutRes private val resource: Int
 ) : ArrayAdapter<T>(inputContext, resource) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
