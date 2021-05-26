@@ -14,4 +14,8 @@ open class ArrayAdapterBase<T>(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return convertView ?: LayoutInflater.from(context).inflate(resource, null)
     }
+
+    fun getItems(): MutableList<T?> {
+        return (0 until count).map { getItem(it) }.toMutableList()
+    }
 }
