@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.LinearLayout
-import androidx.core.view.marginBottom
 import androidx.navigation.findNavController
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.Model
@@ -27,6 +26,8 @@ import com.maxdreher.extensions.IContextBase
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.io.InputStream
+import java.lang.Integer.max
+import java.lang.Integer.min
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -170,6 +171,15 @@ class Util {
             return false
         }
     }
+}
+
+fun <T> List<T>.safeSublist(fromIndex: Int, toIndex: Int): List<T> {
+    val from = max(min(size - 1, fromIndex), 0)
+    val to = max(min(size - 1, toIndex), 0)
+    if (from > to) {
+        return emptyList()
+    }
+    return subList(from, to)
 }
 
 private fun Boolean.wrapToInt(): Int {
