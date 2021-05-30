@@ -103,9 +103,9 @@ object Util {
     /**
      * Apply [View.OnClickListener] to map of buttons
      */
-    fun View.buttonToListener(map: Map<Int, () -> Unit>) {
-        map.entries.forEach { entry ->
-            findViewById<View>(entry.key).setOnClickListener { entry.value.invoke() }
+    fun View.buttonToListener(vararg items: Pair<Int, () -> Unit>) {
+        items.forEach { entry ->
+            findViewById<View>(entry.first).setOnClickListener { entry.second.invoke() }
         }
     }
 
