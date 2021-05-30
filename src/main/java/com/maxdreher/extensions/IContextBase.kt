@@ -14,9 +14,8 @@ import java.lang.Exception
 interface IContextBase {
     fun getContext(): Context?
 
-    fun getClassName(): String {
-        return javaClass.simpleName
-    }
+    val className: String
+        get() = javaClass.simpleName
 
     fun loge(text: String) {
         log(text, error = true)
@@ -24,9 +23,9 @@ interface IContextBase {
 
     fun log(text: String, error: Boolean = false) {
         if (error) {
-            Log.e(getClassName(), text)
+            Log.e(className, text)
         } else {
-            Log.i(getClassName(), text)
+            Log.i(className, text)
         }
     }
 
