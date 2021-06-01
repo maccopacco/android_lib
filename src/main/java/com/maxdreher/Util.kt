@@ -16,6 +16,7 @@ import com.amplifyframework.core.model.query.Where
 import com.amplifyframework.core.model.query.predicate.QueryField
 import com.amplifyframework.core.model.query.predicate.QueryPredicate
 import com.amplifyframework.core.model.query.predicate.QueryPredicates
+import com.amplifyframework.core.model.temporal.Temporal
 import com.amplifyframework.datastore.DataStoreException
 import com.maxdreher.amphelper.AmpHelper
 import com.maxdreher.amphelper.AmpHelperD
@@ -38,9 +39,18 @@ import kotlin.reflect.KClass
  * Utility class
  */
 object Util {
+
     object Date {
-        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS")
-        val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+        private val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+        private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS")
+
+        fun java.util.Date.toAmplifyDate(): Temporal.Date {
+            return Temporal.Date(this)
+        }
+
+        fun java.util.Date.toAmplifyDateTime(): Temporal.DateTime {
+            return Temporal.DateTime(this, 0)
+        }
 
         fun getDateTime(): String {
             return Date().toDateTime()
