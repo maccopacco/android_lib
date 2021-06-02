@@ -81,6 +81,7 @@ interface IGoogleBaseBase : IContextBase {
     fun onSignoutSuccess() {
         call(object {})
         account = null
+        sharedPreferences?.edit()?.putString(accountNamePrefKey, null)?.apply()
         toast("Signed out")
     }
 
