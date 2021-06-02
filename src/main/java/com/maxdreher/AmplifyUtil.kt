@@ -83,9 +83,10 @@ inline fun <reified T : Model> T.delete(
     AmpHelperD().apply {
         com.amplifyframework.core.Amplify.DataStore.delete(
             this@delete,
-            { onSuccess.invoke() },
-            onFail
+            { g.call() },
+            b
         )
+        afterWait({ onSuccess.invoke() }, onFail)
     }
 }
 
@@ -153,6 +154,7 @@ private fun onCantSave(
         ex?.printStackTrace()
     }
 }
+
 suspend inline fun <reified T : Model> KClass<T>.query(queryPredicate: QueryPredicate): SuspendQuery<T> {
     return query(Where.matches(queryPredicate))
 }
