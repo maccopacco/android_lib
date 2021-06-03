@@ -98,6 +98,11 @@ object Util {
         return context!!.resources.getDimension(id).toInt()
     }
 
+    fun Throwable.get(): String? {
+        printStackTrace()
+        return message
+    }
+
     /**
      * Convert map of buttons to navigate to specified resource ids
      */

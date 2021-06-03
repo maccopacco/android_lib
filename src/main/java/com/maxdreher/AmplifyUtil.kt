@@ -18,11 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlin.reflect.KClass
 
-fun DataStoreException.get(): String? {
-    printStackTrace()
-    return this.message
-}
-
 fun QueryField.inList(items: List<Model>): QueryPredicate {
     return items.map { this.eq(it.id) as QueryPredicate }.reduce { a, n -> a.or(n) }
 }
