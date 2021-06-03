@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import java.lang.Exception
+import kotlin.system.measureTimeMillis
 
 /**
  * A base which provides helper functions in exchange for [Context]
@@ -15,8 +16,26 @@ interface IContextBase {
     val className: String
         get() = javaClass.simpleName
 
-    infix fun Long.time(string: String) {
-        log("Took ${this}ms to $string", error = false, append = "/Timing")
+    suspend fun <T> timeSuspend(message: String, block: suspend () -> T): T {
+        val result: T
+        val time = measureTimeMillis {
+            result = block()
+        }
+        logTime(time, message)
+        return result
+    }
+
+    fun <T> time(message: String, block: () -> T): T {
+        val result: T
+        val time = measureTimeMillis {
+            result = block()
+        }
+        logTime(time, message)
+        return result
+    }
+
+    fun logTime(time: Long, message: String) {
+        log("Took ${time}ms to $message", error = false, append = "/Timing")
     }
 
     fun loge(text: String) {
@@ -70,4 +89,6 @@ interface IContextBase {
     }
 
     fun getCaller(param: Any) = param.javaClass.enclosingMethod?.name
+
+    fun getCallerSafe(param: Any) = getCaller(param) ?: "null"
 }
