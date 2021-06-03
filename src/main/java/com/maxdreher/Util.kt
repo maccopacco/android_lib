@@ -9,22 +9,8 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.LinearLayout
 import androidx.navigation.findNavController
-import com.amplifyframework.core.Amplify
-import com.amplifyframework.core.model.Model
-import com.amplifyframework.core.model.query.QueryOptions
-import com.amplifyframework.core.model.query.Where
-import com.amplifyframework.core.model.query.predicate.QueryField
-import com.amplifyframework.core.model.query.predicate.QueryPredicate
-import com.amplifyframework.core.model.query.predicate.QueryPredicates
 import com.amplifyframework.core.model.temporal.Temporal
-import com.amplifyframework.datastore.DataStoreException
-import com.maxdreher.amphelper.AmpHelper
-import com.maxdreher.amphelper.AmpHelperD
-import com.maxdreher.amphelper.AmpHelperQ
-import com.maxdreher.amphelper.suspense.Suspend
-import com.maxdreher.amphelper.suspense.SuspendQuery
 import com.maxdreher.extensions.IContextBase
-import kotlinx.coroutines.*
 import java.io.IOException
 import java.io.InputStream
 import java.lang.Integer.max
@@ -32,7 +18,7 @@ import java.lang.Integer.min
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.reflect.KClass
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -40,16 +26,46 @@ import kotlin.reflect.KClass
  */
 object Util {
 
+
     object Date {
         private val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
         private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS")
+        private val timeZoneOffset = kotlin.run {
+            val tz = TimeZone.getDefault()
+            val cal = GregorianCalendar.getInstance(tz)
+            val millis = tz.getOffset(cal.timeInMillis)
+            TimeUnit.MILLISECONDS.toSeconds(millis.toLong()).toInt()
+        }
 
-        fun java.util.Date.toAmplifyDate(): Temporal.Date {
-            return Temporal.Date(this)
+        class TimeUnitPair(val unit: TimeUnit, val value: Long) {
+            val millis: Long
+                get() = unit.toMillis(value)
+
+            constructor(unit: TimeUnit, value: Int) : this(unit, value.toLong())
+
+            fun fromNow(): java.util.Date {
+                return Date() + this
+            }
+        }
+
+        infix fun Int.unit(unit: TimeUnit): TimeUnitPair {
+            return TimeUnitPair(unit, this)
+        }
+
+        operator fun java.util.Date.plus(timeUnitPair: TimeUnitPair): java.util.Date {
+            return Date(time + timeUnitPair.millis)
+        }
+
+        operator fun java.util.Date.plus(millis: Long): java.util.Date {
+            return Date(time + millis)
+        }
+
+        fun java.util.Date.toAmplifyDate(offset: Int? = null): Temporal.Date {
+            return Temporal.Date(this, offset ?: timeZoneOffset)
         }
 
         fun java.util.Date.toAmplifyDateTime(): Temporal.DateTime {
-            return Temporal.DateTime(this, 0)
+            return Temporal.DateTime(this, timeZoneOffset)
         }
 
         fun getDateTime(): String {
@@ -170,6 +186,9 @@ object Util {
         return false
     }
 
+    fun <T> List<T>.safeSublist(toIndex: Int): List<T> {
+        return safeSublist(0, toIndex)
+    }
 
     fun <T> List<T>.safeSublist(fromIndex: Int, toIndex: Int): List<T> {
         val from = max(min(size - 1, fromIndex), 0)

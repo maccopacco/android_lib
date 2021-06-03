@@ -2,10 +2,8 @@ package com.maxdreher.extensions
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.LayoutRes
 import java.lang.Exception
 
 /**
@@ -17,15 +15,20 @@ interface IContextBase {
     val className: String
         get() = javaClass.simpleName
 
+    infix fun Long.time(string: String) {
+        log("Took ${this}ms to $string", error = false, append = "/Timing")
+    }
+
     fun loge(text: String) {
         log(text, error = true)
     }
 
-    fun log(text: String, error: Boolean = false) {
+    fun log(text: String, error: Boolean = false, append: String = "") {
+        val tag = "$className$append"
         if (error) {
-            Log.e(className, text)
+            Log.e(tag, text)
         } else {
-            Log.i(className, text)
+            Log.i(tag, text)
         }
     }
 
@@ -34,7 +37,7 @@ interface IContextBase {
     }
 
     fun toast(text: String, long: Boolean = false, error: Boolean = false) {
-        log(text, error)
+        log(text, error = error)
         Toast.makeText(
             getContext(),
             text,
@@ -48,7 +51,7 @@ interface IContextBase {
     }
 
     fun alert(title: String, message: String, error: Boolean = false) {
-        log(message, error)
+        log(message, error = error)
         try {
             alertBuilder(title, message).show()
         } catch (e: Exception) {
@@ -61,10 +64,10 @@ interface IContextBase {
     }
 
     fun call(param: Any): String? {
-        return param.javaClass.enclosingMethod?.name.also {
+        return getCaller(param).also {
             log("Called $it")
         }
     }
 
-
+    fun getCaller(param: Any) = param.javaClass.enclosingMethod?.name
 }
