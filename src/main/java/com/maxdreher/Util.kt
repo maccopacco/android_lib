@@ -3,6 +3,7 @@ package com.maxdreher
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -26,6 +27,24 @@ import java.util.concurrent.TimeUnit
  */
 object Util {
 
+    fun <T> reflectInflate(`class`: Class<T>, inflater: LayoutInflater): T {
+        @Suppress("UNCHECKED_CAST")
+        return `class`.getMethod("inflate", LayoutInflater::class.java)
+            .invoke(null, inflater) as T
+    }
+
+
+    fun <T> reflectInflate(
+        `class`: Class<T>,
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): T {
+        @Suppress("UNCHECKED_CAST")
+        return `class`.getMethod(
+            "inflate", LayoutInflater::class.java,
+            ViewGroup::class.java, Boolean::class.java
+        ).invoke(null, inflater, container, false) as T
+    }
 
     object Date {
         private val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
@@ -118,28 +137,6 @@ object Util {
         printStackTrace()
         return message
     }
-
-    /**
-     * Convert map of buttons to navigate to specified resource ids
-     */
-    fun buttonToAction(view: View, map: Map<Int, Int>) {
-        val navy = view.findNavController()
-        map.entries.forEach { entry ->
-            view.findViewById<Button>(entry.key).setOnClickListener {
-                navy.navigate(entry.value)
-            }
-        }
-    }
-
-    /**
-     * Apply [View.OnClickListener] to map of buttons
-     */
-    fun View.buttonToListener(vararg items: Pair<Int, () -> Unit>) {
-        items.forEach { entry ->
-            findViewById<View>(entry.first).setOnClickListener { entry.second.invoke() }
-        }
-    }
-
 
     /**
      * Convert [uri] to [Drawable]

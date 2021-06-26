@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.maxdreher.Util
 
 /**
  * Implementation of [IContextBase] for [Fragment]
@@ -35,10 +36,7 @@ open class FragmentBase<Type : ViewBinding>(
     ): View? {
         @Suppress("UNCHECKED_CAST")
         _binding =
-            `class`.getMethod(
-                "inflate", LayoutInflater::class.java,
-                ViewGroup::class.java, Boolean::class.java
-            ).invoke(null, inflater, container, false) as Type?
+            Util.reflectInflate(`class`, inflater, container)
         return binding.root
     }
 

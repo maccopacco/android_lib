@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
 import com.maxdreher.Util
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Implementation of [IContextBase] for [AppCompatActivity]
  */
-open class ActivityBase(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId),
+open class ActivityBase<Type : ViewBinding>(private val `class`: Class<Type>) :
+    AppCompatActivity(),
     IContextBase {
+
+    private lateinit var binding: Type
 
     companion object {
         private val hasStartedLogging = AtomicBoolean(false)
@@ -22,6 +26,8 @@ open class ActivityBase(@LayoutRes contentLayoutId: Int) : AppCompatActivity(con
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = Util.reflectInflate(`class`, layoutInflater)
+
         onCreated()
         hasStartedLogging.run {
             if (!get()) {
