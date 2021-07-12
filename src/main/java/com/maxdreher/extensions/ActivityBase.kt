@@ -16,7 +16,11 @@ open class ActivityBase<Type : ViewBinding>(private val `class`: Class<Type>) :
     AppCompatActivity(),
     IContextBase {
 
-    private lateinit var binding: Type
+    private var _binding: Type? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    val binding get() = _binding!!
 
     companion object {
         private val hasStartedLogging = AtomicBoolean(false)
@@ -26,7 +30,7 @@ open class ActivityBase<Type : ViewBinding>(private val `class`: Class<Type>) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = Util.reflectInflate(`class`, layoutInflater)
+        _binding = Util.reflectInflate(`class`, layoutInflater)
 
         onCreated()
         hasStartedLogging.run {
