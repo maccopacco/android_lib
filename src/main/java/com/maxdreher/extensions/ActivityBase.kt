@@ -31,6 +31,7 @@ open class ActivityBase<Type : ViewBinding>(private val `class`: Class<Type>) :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = Util.reflectInflate(`class`, layoutInflater)
+        setContentView(binding.root)
 
         onCreated()
         hasStartedLogging.run {
